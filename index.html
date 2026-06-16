@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thiệp Mời Tốt Nghiệp Có Sticker & Nhạc</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- 1. THIẾT LẬP CHUNG --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background-color: #f7f5f0;
+            color: #4a3b32;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px 10px;
+        }
+
+        /* Khung thiệp */
+        .card-container {
+            width: 100%;
+            max-width: 450px;
+            background: #ffffff;
+            border: 8px double #d4af37;
+            border-radius: 20px;
+            padding: 25px 20px;
+            box-shadow: 0px 10px 30px rgba(0,0,0,0.1);
+            text-align: center;
+            position: relative;
+            overflow: hidden; /* Để các sticker không bay ra ngoài khung */
+        }
+
+        /* Mẹo chỉnh sửa */
+        [contenteditable="true"]:hover {
+            background-color: #fffde7;
+            outline: 1px dashed #d4af37;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        [contenteditable="true"]:focus {
+            outline: 2px solid #d4af37;
+            background-color: #fffde7;
+        }
+
+        /* --- 2. CÁC STICKER TRANG TRÍ --- */
+        .sticker {
+            position: absolute;
+            font-size: 1.8rem;
+            pointer-events: none; /* Không làm vướng khi click đúp */
+            filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.15));
+            animation: float 3s ease-in-out infinite;
+        }
+        /* Định vị từng sticker */
+        .stk-cap1 { top: 90px; right: 20px; transform: rotate(15deg); z-index: 10; font-size: 2.2rem; }
+        .stk-book1 { top: 270px; left: 20px; transform: rotate(-20deg); }
+        .stk-cap2 { top: 380px; left: 15px; transform: rotate(-15deg); font-size: 2rem; }
+
+        /* Hiệu ứng bay bồng bềnh nhẹ nhàng */
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(var(--rot, 0deg)); }
+            50% { transform: translateY(-8px) rotate(var(--rot, 0deg)); }
+        }
+        .stk-cap1 { --rot: 15deg; }
+        .stk-book1 { --rot: -20deg; }
+        .stk-cap2 { --rot: -15deg; }
+
+        /* --- 3. TRÌNH PHÁT NHẠC --- */
+        .music-player {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            z-index: 100;
+            cursor: pointer;
+        }
+        .disc {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: #222 url('https://cdn-icons-png.flaticon.com/512/3659/3659851.png') no-repeat center;
+            background-size: cover;
+            border: 2px solid #d4af37;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        .rotate { animation: spin 4s linear infinite; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        /* --- 4. GIAO DIỆN NỘI DUNG --- */
+        h1, h2, .script-font { font-family: 'Dancing Script', cursive; color: #b8860b; }
+        h1 { font-size: 2.2rem; margin-bottom: 5px; }
+        h2 { font-size: 1.8rem; margin: 20px 0 10px 0; }
+        .sub-title { font-size: 1.1rem; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 20px; }
+
+        /* Khung Avatar tròn sửa từ đoạn code cũ */
+        .avatar-wrapper { 
+            position: relative;
+            width: 160px; 
+            height: 160px; /* Thêm px bị thiếu */
+            margin: 0 auto 20px auto;
+            border-radius: 50%;
+            border: 4px solid #d4af37;
+            overflow: hidden;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+        .avatar-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Chi tiết thông tin */
+        .info-section {
+            margin: 15px 0;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        .info-label {
+            font-weight: 700;
+            color: #b8860b;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+            display: block;
+            margin-top: 10px;
+        }
+
+        /* Nút bấm hành động */
+        .btn-rsvp {
+            background-color: #b8860b;
+            color: #ffffff;
+            border: none;
+            padding: 10px 25px;
+            font-family: 'Quicksand', sans-serif;
+            font-weight: 700;
+            font-size: 1rem;
+            border-radius: 25px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(184,134,11,0.3);
+        }
+        .btn-rsvp:hover {
+            background-color: #d4af37;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(184,134,11,0.4);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card-container">
+        <div class="music-player" id="musicBtn">
+            <div class="disc" id="disc"></div>
+            <audio id="bgMusic" src="" loop></audio>"C:\Users\nuhoa\Downloads\Thời Thanh Xuân Sẽ Qua (Gala Nhạc Việt 8).mp3"
+        </div>
+
+        <div class="sticker stk-cap1">🎓</div>
+        <div class="sticker stk-book1">📚</div>
+        <div class="sticker stk-cap2">🎓</div>
+
+        <p class="sub-title" contenteditable="true">Lễ Tốt Nghiệp</p>
+        <h1 contenteditable="true">Trân Trọng Kính Mời</h1>
+        
+        <div class="avatar-wrapper">
+            <img src="https://scontent.fhph6-1.fna.fbcdn.net/v/t39.30808-6/529721032_789967076704846_7040067444393097122_n.jpg?stp=dst-jpg_tt6&cstp=mx960x960&ctp=s960x960&_nc_cat=109&ccb=1-7&_nc_sid=a5f93a&_nc_eui2=AeHaAdEZJfPp2ws8fzO2eeWA6a2uvyJvbyLpra6_Im9vIgBWrIxORFCpEbJS9cJXMZgxdb1bgLfGW9BUY380xpB2&_nc_ohc=VmDr4DgWzw4Q7kNvwFrJj0s&_nc_oc=AdqHtVsmFUC0hPeq64pA4g6YpNC7b5s-0jNiT7jlkn4AHxwS2a6qqEMBX8hTQJ2t0zQite96hXcSJlaYWHwJluNy&_nc_zt=23&_nc_ht=scontent.fhph6-1.fna&_nc_gid=hEFW4LTjToVldH46_V_JbQ&_nc_ss=7b2a8&oh=00_Af82-mPx3X0p4byaIzycgEw1GOj9rTjxY_uipXBxtZebEA&oe=6A34673A" alt="Avatar Tốt Nghiệp">
+        </div>
+
+        <h2 contenteditable="true">Nguyễn Văn A</h2>
+        <p style="font-style: italic; margin-bottom: 15px;" contenteditable="true">Đến chia vui cùng mình trong ngày đặc biệt này nhé!</p>
+
+        <hr style="border: none; border-top: 1px dashed #d4af37; margin: 15px 0;">
+
+        <div class="info-section">
+            <span class="info-label">Thời gian</span>
+            <p contenteditable="true">08:00 AM - Thứ Bảy, Ngày 15 Tháng 07 Năm 2026</p>
+
+            <span class="info-label">Địa điểm</span>
+            <p contenteditable="true">Hội trường Lớn - Trường Đại Học X</p>
+            <p contenteditable="true">(Số 123 Đường ABC, Quận 1, TP. Hồ Chí Minh)</p>
+        </div>
+
+        <button class="btn-rsvp" onclick="alert('Cảm ơn bạn đã xác nhận tham dự! ❤️')">Xác Nhận Tham Dự</button>
+    </div>
+
+    <script>
+        const musicBtn = document.getElementById('musicBtn');
+        const bgMusic = document.getElementById('bgMusic');
+        const disc = document.getElementById('disc');
+
+        musicBtn.addEventListener('click', () => {
+            if (bgMusic.paused) {
+                bgMusic.play().catch(error => {
+                    console.log("Trình duyệt chặn tự động phát nhạc, cần click trực tiếp:", error);
+                });
+                disc.classList.add('rotate');
+            } else {
+                bgMusic.pause();
+                disc.classList.remove('rotate');
+            }
+        });
+    </script>
+</body>
+</html>
